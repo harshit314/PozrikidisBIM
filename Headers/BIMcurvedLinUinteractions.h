@@ -478,7 +478,7 @@ class BIMobjects: public mesh
     }
 
     //correct singularities!!! xi, eta and zeta at 1/3 don't give x = xM! Saves the 1/0 evaluation!
-    ThreeDVector integralDLOp(int eIndx, int GIndx, BIMobjects *otherObj, bool self)
+    ThreeDVector integralDLOp(int GIndx, BIMobjects *otherObj, bool self)
     {
         ThreeDVector xPrime = globalCoord[GIndx];
         // ThreeDVector xBar = xPrime-x0;
@@ -789,6 +789,61 @@ class BIMobjects: public mesh
         return res;
     }
 
+    ThreeDVector getNetFlow(ThreeDVector xPrime)
+    {
+        // ThreeDVector xBar = xPrime-x0;
+        ThreeDVector res(0.0, 0.0, 0.0);
+        for (int iElem = 0; iElem < element.size(); iElem++)
+        {
+           // if(iElem->first == eIndx)   continue;   //delU is zero anyway!
+            //get global coordinates of the element:
+            ThreeDVector x1 = globalCoord[element[iElem].x[0]].x;
+            ThreeDVector x2 = globalCoord[element[iElem].x[1]].x;
+            ThreeDVector x3 = globalCoord[element[iElem].x[2]].x;
+            // get midPoints of elements:
+            ThreeDVector x4 = globalCoord[elementMid[iElem].x[0]].x;
+            ThreeDVector x5 = globalCoord[elementMid[iElem].x[1]].x;
+            ThreeDVector x6 = globalCoord[elementMid[iElem].x[2]].x;
+
+            // map to standard triangle:
+            // general vector inside the element: x = Sum_{i=1}^6 x_i phi_i
+            
+            for(int iQuad=0; iQuad < w.size(); iQuad++)
+            {
+                double xiIn = xi[iQuad], etaIn = eta[iQuad], zetaIn = 1.0 - xi[iQuad] - eta[iQuad];
+                
+                //basis vectors:
+                ThreeDVector eXi = x1*(1.0-4.0*zetaIn) + x2*(4.0*xiIn - 1.0) + x4*(4.0*zetaIn - 4.0*xiIn) + x5*(4.0*etaIn) - x6*(4.0*etaIn);
+                ThreeDVector eEta = x1*(1.0-4.0*zetaIn) + x3*(4.0*etaIn - 1.0) - x4*(4.0*xiIn) + x5*(4.0*xiIn) + x6*(4.0*zetaIn - 4.0*etaIn);
+                
+                double hS = eXi.cross(eEta).norm();
+                ThreeDVector normalVector = eXi.cross(eEta)*(1.0/hS);
+                
+                ThreeDVector xElem = x1*(zetaIn*(2.0*zetaIn-1.0)) + x2*(xiIn*(2.0*xiIn - 1.0)) + x3*(etaIn*(2.0*etaIn-1.0)) + x4*(4.0*zetaIn*xiIn) + x5*(4.0*xiIn*etaIn) + x6*(4.0*etaIn*zetaIn);
+                
+                //linear interpolation for uS:
+                ThreeDVector uSElem = uSNxt[element[iElem].x[0]]*(zetaIn) + uSNxt[element[iElem].x[1]]*(xiIn) + uSNxt[element[iElem].x[2]]*(etaIn);
+
+                ThreeDVector delU = uSElem; 
+                 
+                ThreeDVector r = xElem - xPrime;
+                double modR = r.norm();
+                ThreeDVector nDotuDotT = r*( -6.0*(normalVector.dot(r)*delU.dot(r))/(4.0*M_PI*pow(modR, 5.0)) );
+        
+                res = res + nDotuDotT*(w[iQuad]*0.5*hS);
+            }
+        }
+        
+        if((xPrime-x0).norm()<=pow(10.0, -6.0))   return res;
+
+        ThreeDVector r = xPrime - x0, gHat(0.0, -1.0, 0.0), b(0.0, 0.0, 0.0);
+        double modR = r.norm();
+        ThreeDVector torque(0.0, 0.0, 0.0);
+        b = (gHat + r*(r.dot(gHat)/pow(modR, 2.0)) )*(3.0/(4.0*modR)) + r.cross(torque)*(3.0/(2.0*pow(modR,3.0)));    // size (a) = 1; sphere of radius a=1 falls with terminal speed = 1;
+    
+        return b - res;
+    }
+
     //integrate to get uRB.
     static ThreeDVector getURB(ThreeDVector x, ThreeDVector x0, ThreeDVector uS, double area, vector<ThreeDVector>& ItensorInv)
     {
@@ -833,7 +888,7 @@ class BIMobjects: public mesh
                 for (int iOther = 0; iOther < allObjects.size(); iOther++)
                 {
                     bool self = objectIndx==iOther?true:false;
-                    Top = Top + integralDLOp(eIndx, GIndx, &allObjects[iOther], self);
+                    Top = Top + integralDLOp(GIndx, &allObjects[iOther], self);
                 }
 
                 res = res + b + uInf - Prb - Top + getNormalVector(eIndx, GIndx)*uNormalAux;    

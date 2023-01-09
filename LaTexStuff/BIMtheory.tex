@@ -1,0 +1,176 @@
+\documentclass[12pt]{article}
+
+%\usepackage[landscape]{geometry}
+
+\usepackage{amsmath}
+%opening
+\title{Boundary Integral Method for Stokes Flow}
+\author{Harshit Joshi}
+
+\begin{document}
+
+\newcommand{\dx}{\boldsymbol{x} - \boldsymbol{x_0}}
+
+\newcommand{\bx}{\boldsymbol{x}}
+
+\newcommand{\divv}{\boldsymbol{\nabla}\cdot}
+
+\newcommand{\bxo}{\boldsymbol{x_0}}
+
+\newcommand{\xCx}{\boldsymbol{x},\boldsymbol{x_0}}
+
+\maketitle
+This article is based on the work done by C.Pozrikidis (ref). 
+
+\section{Free space Greens function for steady Stokes flow}
+
+Consider the fundamental solution of the Steady Stokes equation
+\begin{equation}
+	\label{eq:1}
+	-\boldsymbol{\nabla} P + \mu \nabla^2 \textbf{u} + \textbf{F} \delta(\boldsymbol{x}-\boldsymbol{x_0}) = 0, \quad
+	\boldsymbol{\nabla}\cdot \textbf{u} = 0,
+\end{equation}
+where $P$ is the pressure field, $\textbf{u}$ is the velocity field and $\textbf{F}$ is the constant force per unit volume acting on the fluid at $\boldsymbol{x_0}$. The linearity of Stokes equation allows us to write the velcoity field as
+\begin{equation}
+	\label{eq:2}
+	u_i(\boldsymbol{x}) = \frac{1}{8\pi\mu} \mathcal{G}_{ij}(\boldsymbol{x},\boldsymbol{x_0}) F_j.
+\end{equation}
+Here $\boldsymbol{x}$ is the target point, $\boldsymbol{x_0}$ is the source point and $\boldsymbol{\mathcal{G}}$ is called the fundamental solution or the Greens function of the Stokes equation. There are different types of Greens functions based on the domain of the flow. We are interested in the unbounded domain in which the Greens function take the simple form
+\begin{equation}
+	\label{eq:3}
+	\mathcal{G}_{ij}(\boldsymbol{x}, \boldsymbol{x_0}) = \frac{\delta_{ij}}{r} + \frac{r_i r_j}{r^3}, \quad \boldsymbol{r}\equiv \dx. 
+\end{equation}
+Moreover, the pressure and stress tensor of the fundamental solution is given by
+\begin{equation}
+	\label{eq:4}
+	P(\boldsymbol{x}) = \frac{1}{8\pi} \mathcal{P}_j(\xCx) F_j, \quad \mathcal{P}_j(\xCx) = \frac{2 r_j}{r^3},
+\end{equation}
+and 
+\begin{equation}
+	\label{eq:5}
+	\sigma_{ij}(\xCx) = \frac{1}{8\pi} \mathcal{T}_{ijk}(\xCx) F_k, \quad \mathcal{T}_{ijk}(\xCx) = -\frac{6 r_i r_j r_k}{r^5}.
+\end{equation}
+Note that $\sigma_{ij} = -P\delta_{ij} + \mu (\partial_j u_i + \partial_i u_j)$, which gives
+\begin{equation}
+	\label{eq:6}
+	\mathcal{T}_{ijk} = -\mathcal{P}_k \delta_{ij} + \partial_j \mathcal{G}_{ik} +  \partial_i \mathcal{G}_{jk}.
+\end{equation}
+Using \eqref{eq:3}, \eqref{eq:4} in \eqref{eq:1} we have
+\begin{equation}
+	\label{eq:7}
+	\partial_i\mathcal{P}_j + \nabla^2\mathcal{G}_{ij} = -8\pi \delta_{ij} \delta(\dx).
+\end{equation}
+Using \eqref{eq:5} in \eqref{eq:1} gives
+\begin{equation}
+	\label{eq:8}
+	\partial_j\mathcal{T}_{ijk}(\xCx) = -8\pi \delta_{ik}\delta(\dx).  
+\end{equation}
+The symmetry of $\mathcal{T}$ further implies
+\begin{equation}
+	\label{eq:9}
+	\partial_k\left( \epsilon_{ilm} x_l \mathcal{T}_{mjk}(\xCx) \right) = -8\pi\epsilon_{ilj} x_l \delta(\dx). 
+\end{equation}
+Equations \eqref{eq:8} and \eqref{eq:9} will be used frequently in proving many important propositions.
+
+\subsection{Integral properties of Greens functions}
+\textbf{Claim:}	
+\begin{equation}
+	\label{eq:10}
+	\int_{\mathcal{D}} \mathcal{G}_{ij}(\xCx) n_j(\bx) dS(\bx) = 0,
+\end{equation}
+where the pole $\boldsymbol{x_0}$ may be located inside, right on, or outside the surface $\mathcal{D}$.
+Proof uses the fact that $\boldsymbol{\nabla} \cdot \boldsymbol{\mathcal{G}}(\xCx) = 0$ for $\boldsymbol{x_0} \neq \bx$ and $$\lim_{\epsilon \to 0}\int_{S^2_{\epsilon,\boldsymbol{x_0}}} \mathcal{G}_{ij}(\xCx) n_j(\bx) dS(\bx) = 0,$$ where $S^2_{\epsilon,\boldsymbol{x_0}}$ is a sphere of radius $\epsilon$ centered at $\boldsymbol{x_0}$. 
+\newline
+\newline
+\textbf{Claim:}	
+\begin{equation}
+	\label{eq:11}
+	\int_{\mathcal{D}} \mathcal{T}_{ijk}(\xCx) n_k(\bx) dS(\bx) = \begin{cases}
+		-8\pi \delta_{ij} & ;\, \bxo \in V_\mathcal{D}, \\
+		-4\pi \delta_{ij} & ;\, \bxo \in \mathcal{D}, \\
+		0 & ;\, \bxo \notin \overline{ V_\mathcal{D}}. \\
+	\end{cases}
+\end{equation}
+$V_\mathcal{D}$ is the volume enclosed by the surface $\mathcal{D}$. Whenever $\bxo$ lies inside or outside the surface $\mathcal{D}$, \eqref{eq:11} can be proven using $\boldsymbol{\nabla} \cdot \boldsymbol{\mathcal{T}}(\xCx) = -8\pi \boldsymbol{\delta} \delta(\dx)$.
+When $\bxo$ lies right on the surface $\mathcal{D}$, the integral in \eqref{eq:11} has an integrable singularity for Lyanpunov surfaces (surfaces with smoothly varying normal vectors). Using the fact that
+$$\lim_{\epsilon \to 0}\int_{S^{2\uparrow}_{\epsilon,\boldsymbol{x_0}}} \mathcal{T}_{ijk}(\xCx) n_k(\bx) dS(\bx) = -4\pi \delta_{ij}$$ 
+where $S^{2\uparrow}_{\epsilon,\boldsymbol{x_0}}$ is hemisphere of radius $\epsilon$ centered at $\boldsymbol{x_0}$, we find 
+$$
+\int_{\mathcal{D}} \mathcal{T}_{ijk}(\xCx) n_k(\bx) dS(\bx) = \int_{\mathcal{D}}^{\mathcal{PV}} \mathcal{T}_{ijk}(\xCx) n_k(\bx) dS(\bx) = -4\pi \delta_{ij}, \quad \bxo \in \mathcal{D}.
+$$
+
+
+\section{Boundary Integral equation for the Stokes flow}
+
+Before deriving the boundary integral equations we shall state the Lorentz Reciprocal theorem that is widely used in proving many important results.
+\newline
+\newline
+\textbf{Lorentz Reciprocal theorem:} Given two incompressible flows $(\boldsymbol{u^{(1)}}, \boldsymbol{\sigma^{(1)}})$ and $(\boldsymbol{u^{(2)}}, \boldsymbol{\sigma^{(2)}})$	we have,
+\begin{equation}
+	\label{eq:12}
+	\int_{\partial V} \left[ u^{(1)}_i \sigma^{(2)}_{ij}  - u^{(2)}_i \sigma^{(1)}_{ij} \right] n_j dS  = \int_V \left[ u^{(1)}_i \partial_j \sigma^{(2)}_{ij}  - u^{(2)}_i \partial_j \sigma^{(1)}_{ij} \right] dV.
+\end{equation}
+This theorem is a simple consequence of divergence theorem, symmetry of stress tensor and the incompressibility of the flow. To derive the boundary integral equation of the Stokes flow take $\boldsymbol{u^{(1)}}$ to be the desired Stokes flow (satisfying homogeneous Stokes equation) and $\boldsymbol{u^{(2)}}$ to be the fundamental solution to the Stokes flow with point force $F$ at $\bxo$. Thus,
+$$
+\frac{F_k}{8\pi}\int_{\partial V} \left[ u_i \mathcal{T}_{ijk}(\xCx) - \mu^{-1} \mathcal{G}_{ik}(\xCx)  \sigma_{ij} \right] n_j dS(\bx)  = -F_k\int_V u_k \delta(\dx) dV(\bx).
+$$
+Since $\textbf{F}$ is arbitrary and $\boldsymbol{\mathcal{G}}, \boldsymbol{\mathcal{T}}$ both are symmetric tensors, we get
+\begin{multline}
+	\label{eq:13}
+	-\frac{1}{8\pi}\int_{\partial V} u_k(\bx) \mathcal{T}_{ijk}(\xCx) n_j dS(\bx) \\+ \frac{1}{8\pi \mu}\int_{\partial V} \mathcal{G}_{ij}(\xCx)  \sigma_{jk}(\bx) n_k dS(\bx) = \begin{cases}
+		u_i(\bxo) & ;\, \bxo \in V, \\
+		0 & ;\, \bxo \notin \overline{V}.
+	\end{cases}
+\end{multline}
+The above equation is the integral form of the steady Stokes equation which states that the flow field at any point in the domain $V$ is given by integrals of flow velocity and stress tensor over the boundaries of the domain $\partial V$.
+
+
+The first integral in \eqref{eq:13} is called the \textbf{double layer potential} and the second integral is called the \textbf{single layer potential}. Equation \eqref{eq:13} implies that the integrals on the LHS admits a discontinuity as $\bxo$ is varied across $\partial V$. As we shall see this discontinuity is due to the double layer potential.
+
+\subsection{Interpretation of the Double Layer Potential}
+Consider the integrand in the double layer potential 
+\begin{equation}
+	\label{eq:14}
+	u_k \mathcal{T}_{ijk} n_j = u_k \mathcal{T}_{kji} n_j = \mathcal{P}_i (u_j n_j) + \left[  u_k(n_j \partial_j) \mathcal{G}_{ki} +  n_j(u_k\partial_k) \mathcal{G}_{ji} \right] ,
+\end{equation}
+where symmetry of $\boldsymbol{\mathcal{T}}$ and \eqref{eq:6} has been used. Note that the first term on the RHS of \eqref{eq:14} represents flow due to a point source of strength proportional to $\boldsymbol{u}\cdot \textbf{n}$\footnote{$\boldsymbol{\mathcal{P}}$ is the potential flow due to a point source.}. Moreover, the second term is proportional to the flow due to two opposite point forces of strength $\boldsymbol{u}$ and $\textbf{n}$, displaced respectively by $\textbf{n}$ and $\boldsymbol{u}$. When \eqref{eq:14} is integrated over the surface $\partial V$, this forms distribution of souces, sinks\footnote{Velocity flux being zero over $\partial V$ ensures existence of both sources and sinks.} and double layer of forces. This is where the name double layer potential comes from. The discontinuity in the normal component of the velocity comes from the source term $\boldsymbol{\mathcal{P}}$ and that in the tangential component comes from the double layer of forces $\boldsymbol{\nabla} \boldsymbol{\mathcal{G}}$. Since $\boldsymbol{\nabla}\boldsymbol{\mathcal{G}}$ is solenoidal, it leaves the normal velocity component continuous. 
+
+To see that the single layer potential is not responsible for the discontinuity of the flow across $\partial V$, consider the tangential plane of $\partial V$ at $\bxo$, set up the plane polar coordinate system. Now, $\boldsymbol{\mathcal{G}}(\dx) \sim r^{-1}, \, r=|\dx|$ and $dS(\bx) = r\, dr\, d\phi$. Therefore, the integrand of the single layer potential is nonsingular and in the limit $\bxo$ going to $\partial V$ from both sides, we get the value of surface integral with $\bxo$ on $\partial V$.	
+
+Now consider the double layer potential. Since $\boldsymbol{\mathcal{T}}(\dx) \sim r^{-2}$ and $dS(\bx) = r\, dr\, d\phi$, the double layer potential with $\bxo \in \partial V$ only makes sense if $\textbf{n} \cdot (\dx)/r = \mathcal{O}(r^\alpha)$ as $\bxo \to \bx$, with $\alpha \in (0,1].$ This condition holds for Lyapunov-smooth surfaces. Thus, the double layer potential has an integrable singularity for Lyapunov surfaces when $\bxo \in \partial V$. We shall be working with Lyapunov-smooth surfaces and whenever $\bxo \in \partial V$ in double layer potential, we shall refer to it by its principal value, although the distinction is a mere book-keeping, the principal value of an integrable singularity is no different than the value of the full integral. 
+
+\subsection{Flow representation outside a rigid particle}
+
+Consider a rigid particle moving with velocity $\boldsymbol{U}+\boldsymbol{\Omega} \wedge \bx$ in an ambient \textbf{Stokes} flow $\boldsymbol{u}^\infty$. Let the resultant Stokes flow be $\boldsymbol{u}^\infty + \boldsymbol{u}^D$, with the boundary conditions on $\boldsymbol{u}^D$ as
+$$
+\boldsymbol{u}^D = \boldsymbol{U}+\boldsymbol{\Omega} \wedge \bx - \boldsymbol{u}^\infty \quad  \text{on the surface of the particle } S_p,
+$$
+$$
+\boldsymbol{u}^D \to 0, \quad |\bx| \to \infty. 
+$$
+The boundary integral equation \eqref{eq:13} can be used to represent the disturbance flow $\boldsymbol{u}^D$. The contribution from the surface at infinity can be neglected as long as $\boldsymbol{u}^D\to 0$ as $|\bx| \to \infty$. Moreover, using \eqref{eq:13} for the flow $\boldsymbol{U}+\boldsymbol{\Omega} \wedge \bx - \boldsymbol{u}^\infty$ inside the particle, the double layer potential can be eliminated. This finally gives the resultant flow $\boldsymbol{u} = \boldsymbol{u}^\infty + \boldsymbol{u}^D$ as
+\begin{equation}
+	\label{eq:15}
+	\boldsymbol{u}(\bx) = \boldsymbol{u}^\infty + \frac{1}{8\pi\mu} \int_{S_p} \mathcal{G}_{ij}(\bxo,\bx) \sigma_{jk}(\bx)n_k dS(\bx).
+\end{equation} 
+Here the normal vector $\textbf{n}$ points inside the particle's surface, and $\boldsymbol{\sigma} = \boldsymbol{\sigma}^\infty + \boldsymbol{\sigma}^D$ is the stress tensor of the resultant flow field. Multipole expansion of the single layer potential in \eqref{eq:15} is used to obtain the far field expression of the velocity field due to a rigid body (see ref).
+
+\subsection{The boundary integral equation as a Fredholm integral equation}
+
+
+
+\section{Flow repersentation by Single Layer Potential}
+
+\section{Flow representation by Double Layer Potential}
+
+\section{Eigenvalues and Eigenfunctions of the Double Layer Potential}
+
+\section{Removing marginal eigenvalues}
+
+\section{Range Completion for the Double Layer Operator}
+
+\section{Mobility Problem using Picard Iterates}
+
+\section{Numerical procedure}
+
+\end{document}
