@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     
     BIMobjects spheroidTemplate(initPts, 12);    // no. of vertices of icosahedron = 12.
     
-    spheroidTemplate.refineMesh(3);
+    spheroidTemplate.refineMesh(4);
 
     double a = 1.0, e = 0.9922, b = a*sqrt(1-e*e);
     spheroidTemplate.scale(b, a, a);
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
     
     if(myRank==0)   cout<<"number of elements: "<<spheroids[0].getElementSize()<<endl;
     
-    if(myRank==0)   { spheroids[0].storeElemDat(); }
+    if(myRank==0)   { spheroids[1].storeElemDat("./meshData/sphere.txt"); cout<<"Mesh writing complete"<<endl;}
     
     //determine workloads for each core:
     for (int i = 0; i < worldSize; i++)

@@ -350,10 +350,10 @@ class mesh
 
     int getElementSize()    {  return element.size(); }
 
-    void storeElemDat()
+    void storeElemDat(string loc)
     {
         ofstream outFile;
-        outFile.open("./meshData/spheroid4.txt", ios::out); //folder must be present!
+        outFile.open(loc, ios::out); //folder must be present!
         outFile.precision(nPrecision);
             
         for (int iElem = 0; iElem < element.size(); iElem++)
