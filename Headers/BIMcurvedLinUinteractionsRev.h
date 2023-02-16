@@ -446,7 +446,7 @@ class BIMobjects: public mesh
         Itensor.push_back(integrateVectorfunc(&BIMobjects::Drow3));
 
         double detItensor = Itensor[0].dot( Itensor[1].cross(Itensor[2]) ); //det=scalar triple product   
-        if(detItensor==0.0)   
+        if(detItensor==0)   
         {
             cout<<"Itensor is singular!!"<<endl;
         }
@@ -466,7 +466,7 @@ class BIMobjects: public mesh
         ItensorInv.push_back(ThreeDVector(t11, t12, t13) * (1.0/detItensor));
         ItensorInv.push_back(ThreeDVector(t12, t22, t23) * (1.0/detItensor));
         ItensorInv.push_back(ThreeDVector(t13, t23, t33) * (1.0/detItensor));
-
+    
     }
 
     void initializeUs()
@@ -475,8 +475,8 @@ class BIMobjects: public mesh
         uSNxt.clear();
         for (int iGC = 0; iGC < nCoordFlat; iGC++)
         {
-            uS[iGC] = ThreeDVector(0.0, -1.0, 0.0); // uS defined for each 3 nodes of an element.
-            uSNxt[iGC] = ThreeDVector(0.0, -1.0, 0.0);   // need to be zero after each iteration.
+            uS[iGC] = ThreeDVector(0.0, 1.0, 0.0); // uS defined for each 3 nodes of an element.
+            uSNxt[iGC] = ThreeDVector(0.0, 1.0, 0.0);   // need to be zero after each iteration.
         }
     }
 
@@ -603,8 +603,8 @@ class BIMobjects: public mesh
     BIMobjects(ThreeDVector * pts, int size): mesh(pts, size) 
     {
         //set quadrature data:
-        int nQ = 12;    //nQ depends on degree of quadrature.
-        quadratureDat.open("./Headers/triangleQuadratures/p6.txt"); //FILE MUST BE PRESENT AT THIS LOCATION!
+        int nQ = 16;
+        quadratureDat.open("./Headers/triangleQuadratures/p8.txt"); //FILE MUST BE PRESENT AT THIS LOCATION!
         if(!quadratureDat.is_open()) 
         {
             cout<<"Error reading file";
@@ -839,7 +839,7 @@ class BIMobjects: public mesh
         
         if((xPrime-x0).norm()<=pow(10.0, -6.0))   return res;
 
-        ThreeDVector r = xPrime - x0, gHat(0.0, -1.0, 0.0), b(0.0, 0.0, 0.0);
+        ThreeDVector r = xPrime - x0, gHat(0.0, 1.0, 0.0), b(0.0, 0.0, 0.0);
         double modR = r.norm();
         ThreeDVector torque(0.0, 0.0, 0.0);
         b = (gHat + r*(r.dot(gHat)/pow(modR, 2.0)) )*(3.0/(4.0*modR)) + r.cross(torque)*(3.0/(2.0*pow(modR,3.0)));    // size (a) = 1; sphere of radius a=1 falls with terminal speed = 1;
@@ -873,7 +873,7 @@ class BIMobjects: public mesh
         {
             ThreeDVector xPrime = globalCoord[GIndx];
             ThreeDVector Prb = uRBAux + omegaAux.cross(xPrime - x0);    
-            ThreeDVector torque(0.0, 0.0, 0.0), b(0.0, 0.0, 0.0), uInf(0.0, 0.0, 0.0), gHat(0.0, -1.0, 0.0);    
+            ThreeDVector torque(0.0, 0.0, 0.0), b(0.0, 0.0, 0.0), uInf(0.0, 0.0, 0.0), gHat(0.0, 1.0, 0.0);    
             
             for(int iOtherObj = 0; iOtherObj < allObjects.size(); iOtherObj++)
             {

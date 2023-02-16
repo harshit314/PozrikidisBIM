@@ -149,12 +149,12 @@ int main(int argc, char **argv)
 {
     cout.precision(nPrecision);
     
-    //Initialize MPI: 
-    int workloadVCalc[worldSize];
-
+    //Initialize MPI:  
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    
+    int workloadVCalc[worldSize];
 
     ThreeDVector initPts[] = {ThreeDVector(0, 1, phi), ThreeDVector(0, -1, phi), ThreeDVector(0, 1, -phi), ThreeDVector(0, -1, -phi),
                                 ThreeDVector(1, phi, 0), ThreeDVector(-1, phi, 0), ThreeDVector(1, -phi, 0), ThreeDVector(-1, -phi, 0),
@@ -226,6 +226,9 @@ int main(int argc, char **argv)
     }
     setV(spheroids, DelPos, DelRot); // translate and rotate each body and calculate the velocity of this new configuration.
     //store velocity:
+    
+    
+    
     if(myRank==0)
     {
         for (int iObj = 0; iObj < nspheroids; iObj++)
@@ -293,7 +296,6 @@ int main(int argc, char **argv)
         if(myRank==0)   cout<<"dtNext: "<<dtNext<<", Time evolved: "<<tCurr<<endl;
     
     }
-
 
     double endTime = MPI_Wtime();
     if(myRank==0)   cout<<"time taken: "<<(endTime-startTime)<<endl;

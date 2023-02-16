@@ -66,15 +66,16 @@ void setV(vector<BIMobjects> & spheroids)
 
 int main(int argc, char **argv)
 {
-    cout.precision(nPrecision);
-    
     //Initialize MPI: 
-    int workloadVCalc[worldSize];
-
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
+    int workloadVCalc[worldSize];
+    
+    cout.precision(nPrecision);
+ 
+    
     ThreeDVector initPts[] = {ThreeDVector(0, 1, phi), ThreeDVector(0, -1, phi), ThreeDVector(0, 1, -phi), ThreeDVector(0, -1, -phi),
                                 ThreeDVector(1, phi, 0), ThreeDVector(-1, phi, 0), ThreeDVector(1, -phi, 0), ThreeDVector(-1, -phi, 0),
                                 ThreeDVector(phi, 0, 1), ThreeDVector(-phi, 0, 1), ThreeDVector(phi, 0, -1), ThreeDVector(-phi, 0, -1)}; //vertices of icosahedron.
@@ -146,7 +147,7 @@ int main(int argc, char **argv)
     }
     double startTime = MPI_Wtime();
     
-    
+    if(myRank==0)   cout<<"Writing velocity field data"<<endl;
     //create discrete velocity field:
     int nCellsX = 20, nCellsY = 20;   double domainSizeX = 2.0*1.2, domainSizeY = 2.0*0.3, cellSizeX = domainSizeX/(double)nCellsX, cellSizeY = domainSizeY/(double)nCellsY;    
     if(myRank==0)    cout<<"cellSize: "<<cellSizeX<<", "<<cellSizeY<<endl;
